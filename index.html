@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate IBANs</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px;
+            flex-direction: column;
+        }
+        .container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 1000px;
+            flex-wrap: wrap;
+        }
+        h1 {
+            color: purple;
+            text-align: center;
+            width: 100%;
+        }
+        form {
+            width: 100%;
+            max-width: 450px;
+            padding: 20px;
+            background-color: #222;
+            border-radius: 10px;
+            margin: 10px;
+            box-sizing: border-box;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: none;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: purple;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #5a005a;
+        }
+        .results {
+            width: 100%;
+            max-width: 450px;
+            max-height: 400px;
+            padding: 20px;
+            background-color: #333;
+            border-radius: 10px;
+            color: white;
+            margin: 10px;
+            box-sizing: border-box;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Generate IBANs</h1>
+    <div class="container">
+        <form id="ibanForm">
+            <label for="countryCode">Country Code:</label>
+            <input type="text" id="countryCode" name="countryCode" maxlength="2" required>
+
+            <label for="bankCodeLength">Bank Code Length:</label>
+            <input type="number" id="bankCodeLength" name="bankCodeLength" required>
+
+            <label for="accountNumberLength">Account Number Length:</label>
+            <input type="number" id="accountNumberLength" name="accountNumberLength" required>
+
+            <label for="quantity">Quantity:</label>
+            <input type="number" id="quantity" name="quantity" required>
+
+            <button type="submit">Generate IBANs</button>
+        </form>
+        <div id="results" class="results"></div>
+    </div>
+
+    <script>
+        document.getElementById('ibanForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            var form = event.target;
+            var formData = new FormData(form);
+
+            fetch('generate_ibans.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                var resultsDiv = document.getElementById('results');
+                resultsDiv.innerHTML = '';
+                data.forEach(iban => {
+                    var p = document.createElement('p');
+                    p.textContent = iban;
+                    resultsDiv.appendChild(p);
+                });
+                resultsDiv.style.display = 'block';
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>
